@@ -46,9 +46,15 @@ jobs:
       matrix:
         include: ${{ fromJson(needs.generate-matrix.outputs.matrix) }}
     steps:
-      - name: Setup and Cache Homebrew Gems with CI test mode
+      - name: Set up Homebrew
+        id: set-up-homebrew
+        uses: Homebrew/actions/setup-homebrew@master
+        with:
+          test-bot: false
+
+      - name: Setup Gems Cache with CI test mode
         if: always()
-        uses: mohzulfikar/actions-homebrew/setup-cache@setup-cache
+        uses: mohzulfikar/actions-homebrew/setup-gems-cache@setup-cache
         with:
           ci_test_mode: 1
 

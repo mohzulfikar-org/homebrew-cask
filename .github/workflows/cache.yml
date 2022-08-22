@@ -23,6 +23,12 @@ jobs:
           - ubuntu-latest
     runs-on: ${{ matrix.os }}
     steps:
-      - name: Setup and Cache Homebrew Gems
+      - name: Set up Homebrew
+        id: set-up-homebrew
+        uses: Homebrew/actions/setup-homebrew@master
+        with:
+          test-bot: false
+
+      - name: Setup Gems Cache
         if: always()
-        uses: mohzulfikar/actions-homebrew/setup-cache@setup-cache
+        uses: mohzulfikar/actions-homebrew/setup-gems-cache@setup-cache
