@@ -32,3 +32,6 @@ jobs:
       - name: Setup Gems Cache
         if: always()
         uses: mohzulfikar/actions-homebrew/setup-gems-cache@setup-cache
+        with: 
+          gems-path: ${{ steps.set-up-homebrew.outputs.gems-path }}
+          gems-hash: ${{ steps.set-up-homebrew.outputs.gems-hash }}

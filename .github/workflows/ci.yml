@@ -57,6 +57,9 @@ jobs:
         uses: mohzulfikar/actions-homebrew/setup-gems-cache@setup-cache
         with:
           ci_test_mode: 1
+          relink: 1
+          gems-path: ${{ steps.set-up-homebrew.outputs.gems-path }}
+          gems-hash: ${{ steps.set-up-homebrew.outputs.gems-hash }}
 
       - name: Run brew style ${{ matrix.tap }}
         run: brew style '${{ matrix.tap }}'
