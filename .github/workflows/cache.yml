@@ -22,9 +22,7 @@ jobs:
           - macos-11.0
           - ubuntu-latest
     runs-on: ${{ matrix.os }}
-    steps:      
+    steps:
       - name: Setup and Cache Homebrew Gems
         if: always()
         uses: mohzulfikar/actions-homebrew/setup-cache@setup-cache
-        with:
-          workdir: ${{ matrix.workdir || github.workspace }}
