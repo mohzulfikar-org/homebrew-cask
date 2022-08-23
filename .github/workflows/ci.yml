@@ -71,7 +71,7 @@ jobs:
       - name: Echo gems outputs outcome
         if: always()
         run: |
-          echo ${{ steps.gems-cache.gems-outcome }}
+          echo ${{ steps.gems-cache.outputs.gems-outcome }}
 
       - name: Run brew style ${{ matrix.tap }}
         run: brew style '${{ matrix.tap }}'
@@ -226,4 +226,3 @@ jobs:
       - name: Result
         run: ${{ needs.test.result == 'success' }}
 
-        
