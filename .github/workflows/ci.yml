@@ -61,7 +61,7 @@ jobs:
           relink: 1
           gems-path: ${{ steps.set-up-homebrew.outputs.gems-path }}
           gems-hash: ${{ steps.set-up-homebrew.outputs.gems-hash }}
-          
+
       - name: echo cache outputs
         shell: /bin/bash -e {0}
         run: |
@@ -225,3 +225,5 @@ jobs:
     steps:
       - name: Result
         run: ${{ needs.test.result == 'success' }}
+
+        
