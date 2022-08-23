@@ -55,12 +55,18 @@ jobs:
       - name: Setup Gems Cache with CI test mode
         id: gems-cache
         if: always()
-        uses: mohzulfikar/actions-homebrew/setup-gems-cache@setup-cache
+        uses: mohzulfikar/actions-homebrew/setup-gems-cache@setup-cache-testing
         with:
           ci_test_mode: 1
           relink: 1
           gems-path: ${{ steps.set-up-homebrew.outputs.gems-path }}
           gems-hash: ${{ steps.set-up-homebrew.outputs.gems-hash }}
+          
+      - name: echo cache outputs
+        shell: /bin/bash -e {0}
+        run: |
+          # cache outputs
+          echo ${{ steps.cache.outputs.cache-hit }}
 
       - name: Echo gems outputs outcome
         if: always()
