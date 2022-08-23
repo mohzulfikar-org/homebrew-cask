@@ -52,20 +52,70 @@ jobs:
         with:
           test-bot: false
 
-      - name: Setup Gems Cache with CI test mode
-        id: gems-cache
-        if: always()
-        uses: mohzulfikar/actions-homebrew/setup-gems-cache@setup-cache-testing
+      - name: Check out Pull Request
+        uses: actions/checkout@v3
         with:
-          ci_test_mode: 1
-          relink: 1
-          gems-path: ${{ steps.set-up-homebrew.outputs.gems-path }}
-          gems-hash: ${{ steps.set-up-homebrew.outputs.gems-hash }}
+          fetch-depth: 0
+          persist-credentials: false
 
-      - name: Echo gems outputs outcome
-        if: always()
+      - name: Clean up CI machine
         run: |
-          echo ${{ steps.gems-cache.outputs.gems-outcome }}
+          if ! brew list --cask visual-studio &>/dev/null; then
+            if ! rm -r '/Applications/Visual Studio.app'; then
+              echo '::warning::Removing Visual Studio is no longer necessary.'
+            fi
+          fi
+          
+          if ! brew uninstall --cask julia && ! rm -r /Applications/Julia-*.app; then
+            echo '::warning::Removing Julia is no longer necessary.'
+          fi
+
+          if ! rm /usr/local/share/man/man1/al.1 || \
+             ! sudo rm /etc/paths.d/mono-commands || \
+             ! sudo rm -r /Library/Frameworks/Mono.framework || \
+             ! sudo pkgutil --forget com.xamarin.mono-MDK.pkg; then
+            echo '::warning::Uninstalling Mono is no longer necessary.'
+          fi
+
+          if ! rm /usr/local/bin/dotnet; then
+            echo '::warning::Removing `dotnet` symlink is no longer necessary.'
+          fi
+
+          if ! rm /usr/local/bin/pod; then
+            echo '::warning::Removing `cocoapods` symlink is no longer necessary.'
+          fi
+
+          if ! rm /usr/local/bin/conda; then
+            echo '::warning::Removing `conda` symlink is no longer necessary.'
+          fi
+
+          brew unlink python && brew link --overwrite python
+        if: runner.os == 'macOS'
+
+      # Workaround until the `cache` action uses the changes from
+      # https://github.com/actions/toolkit/pull/580.
+      - name: Unlink workspace
+        run: |
+          mv "${GITHUB_WORKSPACE}" "${GITHUB_WORKSPACE}-link"
+          mkdir "${GITHUB_WORKSPACE}"
+
+      - name: Cache Homebrew Gems
+        uses: actions/cache@v3
+        with:
+          path: ${{ steps.set-up-homebrew.outputs.gems-path }}
+          key: ${{ runner.os }}-rubygems-${{ steps.set-up-homebrew.outputs.gems-hash }}
+          restore-keys: ${{ runner.os }}-rubygems-
+
+      # Workaround until the `cache` action uses the changes from
+      # https://github.com/actions/toolkit/pull/580.
+      - name: Re-link workspace
+        run: |
+          rmdir "${GITHUB_WORKSPACE}"
+          mv "${GITHUB_WORKSPACE}-link" "${GITHUB_WORKSPACE}"
+
+      - name: Install Homebrew Gems
+        id: gems
+        run: brew install-bundler-gems
 
       - name: Run brew style ${{ matrix.tap }}
         run: brew style '${{ matrix.tap }}'
@@ -219,3 +269,4 @@ jobs:
     steps:
       - name: Result
         run: ${{ needs.test.result == 'success' }}
+
