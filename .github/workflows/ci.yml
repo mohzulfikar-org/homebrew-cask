@@ -62,12 +62,6 @@ jobs:
           gems-path: ${{ steps.set-up-homebrew.outputs.gems-path }}
           gems-hash: ${{ steps.set-up-homebrew.outputs.gems-hash }}
 
-      - name: echo cache outputs
-        shell: /bin/bash -e {0}
-        run: |
-          # cache outputs
-          echo ${{ steps.cache.outputs.cache-hit }}
-
       - name: Echo gems outputs outcome
         if: always()
         run: |
