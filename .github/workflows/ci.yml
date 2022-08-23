@@ -53,6 +53,7 @@ jobs:
           test-bot: false
 
       - name: Setup Gems Cache with CI test mode
+        id: gems-cache
         if: always()
         uses: mohzulfikar/actions-homebrew/setup-gems-cache@setup-cache
         with:
